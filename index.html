@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compagnon de Grossesse</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f2eb;
+    --warm-white: #faf8f4;
+    --terracotta: #c17a5a;
+    --terracotta-light: #d4956f;
+    --forest: #3d5a4a;
+    --forest-light: #4e7260;
+    --charcoal: #2a2520;
+    --gray-warm: #8a7f76;
+    --border: #e2d8cc;
+    --sidebar-w: 310px;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–cream);
+color: var(–charcoal);
+height: 100vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+
+/* ── HEADER ── */
+header {
+background: var(–forest);
+padding: 14px 18px;
+display: flex; align-items: center; gap: 12px;
+border-bottom: 3px solid var(–terracotta);
+flex-shrink: 0; z-index: 10;
+}
+.header-icon {
+width: 36px; height: 36px; background: var(–terracotta);
+border-radius: 50%; display: flex; align-items: center;
+justify-content: center; font-size: 17px; flex-shrink: 0;
+}
+.header-text h1 {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px; font-weight: 400; color: var(–warm-white);
+}
+.header-text p { font-size: 10px; color: rgba(250,248,244,0.5); margin-top: 1px; }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.week-badge {
+background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+color: var(–warm-white); font-size: 10px; padding: 4px 11px;
+border-radius: 20px; font-weight: 500; letter-spacing: 0.05em;
+text-transform: uppercase; white-space: nowrap;
+}
+.sidebar-toggle {
+background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+color: white; width: 32px; height: 32px; border-radius: 8px;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+font-size: 15px; transition: background 0.2s; flex-shrink: 0;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,0.22); }
+
+/* ── LAYOUT ── */
+.app-body { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+width: var(–sidebar-w); background: var(–warm-white);
+border-right: 1px solid var(–border);
+display: flex; flex-direction: column; flex-shrink: 0;
+overflow: hidden; transition: width 0.3s ease;
+}
+.sidebar.hidden { width: 0; }
+
+.sidebar-inner {
+width: var(–sidebar-w); overflow-y: auto;
+display: flex; flex-direction: column; height: 100%;
+}
+.sidebar-inner::-webkit-scrollbar { width: 3px; }
+.sidebar-inner::-webkit-scrollbar-thumb { background: var(–border); border-radius: 3px; }
+
+/* SIDEBAR TABS */
+.sidebar-tabs {
+display: flex; border-bottom: 1px solid var(–border); flex-shrink: 0;
+}
+.stab {
+flex: 1; padding: 10px 4px; font-size: 10px; font-weight: 600;
+text-transform: uppercase; letter-spacing: 0.04em;
+color: var(–gray-warm); background: none; border: none;
+border-bottom: 2px solid transparent; cursor: pointer;
+transition: all 0.2s; font-family: ‘DM Sans’, sans-serif;
+display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.stab .stab-icon { font-size: 15px; }
+.stab:hover { background: var(–cream); }
+.stab.active { border-bottom-color: var(–terracotta); color: var(–terracotta); background: var(–cream); }
+
+.sidebar-panel { display: none; padding: 14px; flex-direction: column; gap: 13px; }
+.sidebar-panel.active { display: flex; }
+
+/* SAVE BTN */
+.save-btn {
+background: var(–forest); color: white; border: none;
+border-radius: 8px; font-size: 11px; font-family: ‘DM Sans’, sans-serif;
+padding: 8px 14px; cursor: pointer; transition: background 0.2s;
+font-weight: 500; width: 100%;
+}
+.save-btn:hover { background: var(–forest-light); }
+
+.saved-notice {
+background: rgba(61,90,74,0.1); border: 1px solid rgba(61,90,74,0.2);
+border-radius: 7px; padding: 6px 12px; font-size: 11px;
+color: var(–forest); text-align: center; font-weight: 500;
+display: none;
+}
+.saved-notice.show { display: block; animation: fadeUp 0.3s ease; }
+
+/* FIELDS */
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+font-size: 10px; font-weight: 600; text-transform: uppercase;
+letter-spacing: 0.06em; color: var(–gray-warm);
+}
+.field-input {
+background: var(–cream); border: 1px solid var(–border);
+border-radius: 8px; padding: 8px 11px;
+font-family: ‘DM Sans’, sans-serif; font-size: 13px;
+color: var(–charcoal); outline: none; width: 100%;
+transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(–forest); }
+textarea.field-input { resize: none; min-height: 65px; line-height: 1.5; }
+
+.week-display {
+background: linear-gradient(135deg, rgba(61,90,74,0.08), rgba(193,122,90,0.08));
+border: 1px solid var(–border); border-radius: 10px;
+padding: 12px 14px; text-align: center;
+}
+.week-number {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 36px; font-weight: 300; color: var(–forest); line-height: 1;
+}
+.week-label { font-size: 11px; color: var(–gray-warm); margin-top: 3px; }
+.week-trimestre { font-size: 10px; color: var(–terracotta); font-weight: 600; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.humeur-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.humeur-btn {
+background: var(–cream); border: 1px solid var(–border);
+border-radius: 20px; padding: 4px 10px; font-size: 11px;
+cursor: pointer; transition: all 0.2s; font-family: ‘DM Sans’, sans-serif;
+}
+.humeur-btn.active { background: var(–forest); color: white; border-color: var(–forest); }
+
+.supplements-list { display: flex; flex-direction: column; gap: 5px; }
+.supplement-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.supplement-item input[type=“checkbox”] { width: 14px; height: 14px; accent-color: var(–forest); cursor: pointer; }
+
+/* BEBE CARD */
+.bebe-card {
+background: linear-gradient(135deg, rgba(61,90,74,0.06), rgba(193,122,90,0.06));
+border: 1px solid var(–border); border-radius: 10px; padding: 12px 13px;
+}
+.bebe-card h3 {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 14px; color: var(–forest); margin-bottom: 6px; font-weight: 400;
+}
+.bebe-card p { font-size: 11.5px; color: var(–gray-warm); line-height: 1.6; }
+
+/* RDV QUESTIONS */
+.rdv-q-list { display: flex; flex-direction: column; gap: 6px; }
+.rdv-q-item {
+display: flex; align-items: flex-start; gap: 8px;
+background: var(–cream); border: 1px solid var(–border);
+border-radius: 8px; padding: 8px 10px; font-size: 12px;
+line-height: 1.4;
+}
+.rdv-q-item input[type=“checkbox”] { margin-top: 1px; accent-color: var(–terracotta); flex-shrink: 0; }
+.rdv-q-item.done { opacity: 0.5; }
+.rdv-q-item.done span { text-decoration: line-through; }
+.rdv-q-del {
+margin-left: auto; background: none; border: none;
+color: var(–gray-warm); cursor: pointer; font-size: 14px;
+padding: 0 2px; flex-shrink: 0;
+}
+.rdv-q-del:hover { color: var(–terracotta); }
+
+.rdv-add-row { display: flex; gap: 6px; }
+.rdv-add-input {
+flex: 1; background: var(–cream); border: 1px solid var(–border);
+border-radius: 8px; padding: 7px 10px; font-size: 12px;
+font-family: ‘DM Sans’, sans-serif; color: var(–charcoal); outline: none;
+}
+.rdv-add-input:focus { border-color: var(–forest); }
+.rdv-add-btn {
+background: var(–terracotta); color: white; border: none;
+border-radius: 8px; width: 32px; height: 32px;
+cursor: pointer; font-size: 18px; display: flex;
+align-items: center; justify-content: center; flex-shrink: 0;
+}
+.rdv-add-btn:hover { background: var(–terracotta-light); }
+
+.suggest-btn {
+background: none; border: 1px dashed var(–forest-light);
+color: var(–forest); border-radius: 8px; padding: 7px 12px;
+font-size: 11px; cursor: pointer; font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s; width: 100%; font-weight: 500;
+}
+.suggest-btn:hover { background: rgba(61,90,74,0.06); }
+
+/* EXAM CHECKLIST */
+.exam-section { display: flex; flex-direction: column; gap: 8px; }
+.exam-trimestre-label {
+font-size: 10px; font-weight: 700; text-transform: uppercase;
+letter-spacing: 0.07em; color: var(–terracotta); margin-top: 4px;
+}
+.exam-item {
+display: flex; align-items: flex-start; gap: 8px;
+font-size: 12px; line-height: 1.4;
+}
+.exam-item input[type=“checkbox”] { margin-top: 1px; accent-color: var(–forest); flex-shrink: 0; }
+.exam-item.done span { text-decoration: line-through; opacity: 0.5; }
+.exam-week { font-size: 10px; color: var(–gray-warm); margin-left: auto; white-space: nowrap; padding-left: 4px; }
+
+/* ── MAIN ── */
+.main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.categories-bar { background: var(–warm-white); border-bottom: 1px solid var(–border); flex-shrink: 0; }
+.cat-tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+.cat-tabs::-webkit-scrollbar { display: none; }
+.cat-tab {
+display: flex; flex-direction: column; align-items: center; gap: 3px;
+padding: 9px 13px; cursor: pointer; border-bottom: 2px solid transparent;
+transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+background: none; border-top: none; border-left: none; border-right: none;
+font-family: ‘DM Sans’, sans-serif;
+}
+.cat-tab:hover { background: var(–cream); }
+.cat-tab.active { border-bottom-color: var(–terracotta); background: var(–cream); }
+.cat-tab .cat-emoji { font-size: 15px; }
+.cat-tab .cat-label { font-size: 9px; font-weight: 500; color: var(–gray-warm); text-transform: uppercase; letter-spacing: 0.04em; }
+.cat-tab.active .cat-label { color: var(–terracotta); }
+
+.quick-questions {
+background: var(–cream); border-bottom: 1px solid var(–border);
+padding: 8px 14px; display: flex; gap: 6px; overflow-x: auto;
+scrollbar-width: none; flex-shrink: 0; min-height: 44px; align-items: center;
+}
+.quick-questions::-webkit-scrollbar { display: none; }
+
+.chip {
+background: var(–warm-white); border: 1px solid var(–border);
+color: var(–charcoal); font-family: ‘DM Sans’, sans-serif;
+font-size: 11px; padding: 5px 11px; border-radius: 20px;
+cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.chip:hover { background: var(–forest); color: white; border-color: var(–forest); }
+.chip.loading-chip { color: var(–gray-warm); font-style: italic; cursor: default; pointer-events: none; }
+
+/* CHAT */
+.chat-container {
+flex: 1; overflow-y: auto; padding: 18px 16px;
+display: flex; flex-direction: column; gap: 14px;
+max-width: 680px; width: 100%; margin: 0 auto;
+}
+.chat-container::-webkit-scrollbar { width: 3px; }
+.chat-container::-webkit-scrollbar-thumb { background: var(–border); border-radius: 3px; }
+
+.welcome-card {
+background: var(–warm-white); border: 1px solid var(–border);
+border-left: 4px solid var(–terracotta); border-radius: 12px;
+padding: 18px 20px; animation: fadeUp 0.5s ease both;
+}
+.welcome-card h2 {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 17px; font-weight: 400; color: var(–forest); margin-bottom: 7px;
+}
+.welcome-card p { font-size: 12.5px; line-height: 1.7; color: var(–gray-warm); }
+.profile-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 11px; }
+.profile-pill { background: var(–forest); color: white; font-size: 10px; padding: 3px 9px; border-radius: 12px; font-weight: 500; }
+
+.message { display: flex; gap: 9px; animation: fadeUp 0.3s ease both; }
+.message.user { flex-direction: row-reverse; }
+.avatar {
+width: 30px; height: 30px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 13px; flex-shrink: 0; margin-top: 2px;
+}
+.avatar.ai { background: var(–forest); }
+.avatar.user { background: var(–terracotta); }
+.bubble { max-width: 86%; padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.75; }
+.message.ai .bubble { background: var(–warm-white); border: 1px solid var(–border); border-top-left-radius: 4px; }
+.message.user .bubble { background: var(–forest); color: white; border-top-right-radius: 4px; }
+.bubble strong { font-weight: 600; }
+.bubble ul, .bubble ol { padding-left: 16px; margin: 5px 0; }
+.bubble li { margin-bottom: 3px; }
+.bubble p + p { margin-top: 6px; }
+
+.typing-indicator { display: flex; gap: 9px; align-items: center; }
+.typing-dots {
+background: var(–warm-white); border: 1px solid var(–border);
+border-radius: 16px; border-top-left-radius: 4px;
+padding: 10px 15px; display: flex; gap: 4px; align-items: center;
+}
+.dot { width: 5px; height: 5px; background: var(–forest-light); border-radius: 50%; animation: bounce 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* INPUT */
+.input-area { background: var(–warm-white); border-top: 1px solid var(–border); padding: 11px 16px; flex-shrink: 0; }
+.input-inner { max-width: 680px; margin: 0 auto; display: flex; gap: 7px; align-items: flex-end; }
+textarea#userInput {
+flex: 1; background: var(–cream); border: 1px solid var(–border);
+border-radius: 12px; padding: 10px 13px; font-family: ‘DM Sans’, sans-serif;
+font-size: 13px; color: var(–charcoal); resize: none; outline: none;
+min-height: 40px; max-height: 100px; transition: border-color 0.2s; line-height: 1.5;
+}
+textarea#userInput:focus { border-color: var(–forest); }
+textarea#userInput::placeholder { color: var(–gray-warm); }
+
+button.send, button.mic-btn {
+color: white; border: none; border-radius: 12px;
+width: 40px; height: 40px; display: flex; align-items: center;
+justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+button.send { background: var(–forest); }
+button.send:hover { background: var(–forest-light); }
+button.send:disabled { background: var(–border); cursor: not-allowed; }
+button.send svg { width: 16px; height: 16px; }
+
+button.mic-btn { background: var(–cream); border: 1px solid var(–border); color: var(–gray-warm); font-size: 17px; }
+button.mic-btn:hover { background: var(–terracotta); color: white; border-color: var(–terracotta); }
+button.mic-btn.recording { background: var(–terracotta); color: white; border-color: var(–terracotta); animation: pulse 1s infinite; }
+
+.disclaimer-text {
+max-width: 680px; margin: 6px auto 0; font-size: 10px; color: var(–gray-warm);
+background: rgba(193,122,90,0.07); border: 1px solid rgba(193,122,90,0.18);
+border-radius: 6px; padding: 5px 10px; font-style: italic;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+.sidebar { position: absolute; top: 0; left: 0; height: 100%; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+:root { –sidebar-w: 290px; }
+}
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-icon">🌿</div>
+  <div class="header-text">
+    <h1>Compagnon de grossesse</h1>
+    <p>Conseils personnalisés · Profil intégré</p>
+  </div>
+  <div class="header-right">
+    <div class="week-badge" id="weekBadge">Semaine —</div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">📋</button>
+  </div>
+</header>
+
+<div class="app-body">
+
+  <!-- ── SIDEBAR ── -->
+
+  <div class="sidebar hidden" id="sidebar">
+    <div class="sidebar-inner">
+
+```
+  <div class="sidebar-tabs">
+    <button class="stab active" onclick="showSTab(0)"><span class="stab-icon">🤰</span>Suivi</button>
+    <button class="stab" onclick="showSTab(1)"><span class="stab-icon">❓</span>RDV</button>
+    <button class="stab" onclick="showSTab(2)"><span class="stab-icon">🧪</span>Examens</button>
+  </div>
+
+  <!-- PANEL 0 : SUIVI -->
+  <div class="sidebar-panel active" id="panel0">
+
+    <div class="field-group">
+      <div class="field-label">Date de début de grossesse</div>
+      <input type="date" class="field-input" id="startDateInput" onchange="calcWeek()">
+      <div style="font-size:10px;color:var(--gray-warm);margin-top:3px;">La semaine se calcule automatiquement</div>
+    </div>
+
+    <div class="week-display">
+      <div class="week-number" id="weekNumber">—</div>
+      <div class="week-label">semaine de grossesse</div>
+      <div class="week-trimestre" id="weekTrimestre"></div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Poids (kg)</div>
+      <input type="number" class="field-input" id="weightInput" min="40" max="120" step="0.1" placeholder="ex. 62.5">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Humeur du jour</div>
+      <div class="humeur-row">
+        <button class="humeur-btn" onclick="setHumeur(this,'😊 Bien')">😊 Bien</button>
+        <button class="humeur-btn" onclick="setHumeur(this,'😐 Moyen')">😐 Moyen</button>
+        <button class="humeur-btn" onclick="setHumeur(this,'😔 Difficile')">😔 Difficile</button>
+        <button class="humeur-btn" onclick="setHumeur(this,'🤢 Nausées')">🤢 Nausées</button>
+        <button class="humeur-btn" onclick="setHumeur(this,'😴 Fatiguée')">😴 Fatiguée</button>
+        <button class="humeur-btn" onclick="setHumeur(this,'✨ Super')">✨ Super</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Prochain RDV médical</div>
+      <input type="date" class="field-input" id="rdvInput">
+      <input type="text" class="field-input" id="rdvNoteInput" placeholder="Type de RDV (écho, sage-femme…)" style="margin-top:5px;">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Suppléments du jour</div>
+      <div class="supplements-list">
+        <label class="supplement-item"><input type="checkbox" id="sup_folique"> Acide folique</label>
+        <label class="supplement-item"><input type="checkbox" id="sup_fer"> Fer</label>
+        <label class="supplement-item"><input type="checkbox" id="sup_d3"> Vitamine D3</label>
+        <label class="supplement-item"><input type="checkbox" id="sup_omega"> Oméga-3</label>
+        <label class="supplement-item"><input type="checkbox" id="sup_iode"> Iode</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Notes personnelles</div>
+      <textarea class="field-input" id="notesInput" placeholder="Symptômes, ressenti…"></textarea>
+    </div>
+
+    <div class="bebe-card">
+      <h3>👶 Bébé cette semaine</h3>
+      <p id="bebeText">Entrez votre date de début de grossesse pour voir le développement de votre bébé.</p>
+    </div>
+
+    <button class="save-btn" onclick="saveProfile()">✓ Sauvegarder le suivi</button>
+    <div class="saved-notice" id="savedNotice">✓ Sauvegardé</div>
+  </div>
+
+  <!-- PANEL 1 : QUESTIONS RDV -->
+  <div class="sidebar-panel" id="panel1">
+    <div style="font-size:12px;color:var(--gray-warm);line-height:1.5;">
+      Notez vos questions pour le prochain rendez-vous médical. Cochez-les une fois posées.
+    </div>
+
+    <button class="suggest-btn" onclick="suggestRdvQuestions()">✨ Suggérer des questions selon ma semaine</button>
+
+    <div class="rdv-add-row">
+      <input type="text" class="rdv-add-input" id="rdvQInput" placeholder="Ajouter une question…" onkeydown="if(event.key==='Enter') addRdvQ()">
+      <button class="rdv-add-btn" onclick="addRdvQ()">+</button>
+    </div>
+
+    <div class="rdv-q-list" id="rdvQList"></div>
+
+    <button class="save-btn" onclick="saveRdvQs()" style="margin-top:4px;">✓ Sauvegarder</button>
+    <div class="saved-notice" id="savedNoticeRdv">✓ Sauvegardé</div>
+  </div>
+
+  <!-- PANEL 2 : EXAMENS -->
+  <div class="sidebar-panel" id="panel2">
+    <div style="font-size:12px;color:var(--gray-warm);line-height:1.5;">
+      Checklist des examens recommandés en Suisse (recommandations OFSP / Société Suisse de Gynécologie).
+    </div>
+    <div class="exam-section" id="examList"></div>
+    <button class="save-btn" onclick="saveExams()" style="margin-top:8px;">✓ Sauvegarder</button>
+    <div class="saved-notice" id="savedNoticeExam">✓ Sauvegardé</div>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <!-- ── MAIN ── -->
+
+  <div class="main-area">
+
+```
+<div class="categories-bar">
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="selectCategory(0)"><span class="cat-emoji">🥗</span><span class="cat-label">Alimentation</span></button>
+    <button class="cat-tab" onclick="selectCategory(1)"><span class="cat-emoji">🏋️</span><span class="cat-label">Sport</span></button>
+    <button class="cat-tab" onclick="selectCategory(2)"><span class="cat-emoji">🧘</span><span class="cat-label">Bien-être</span></button>
+    <button class="cat-tab" onclick="selectCategory(3)"><span class="cat-emoji">💊</span><span class="cat-label">Santé</span></button>
+    <button class="cat-tab" onclick="selectCategory(4)"><span class="cat-emoji">😴</span><span class="cat-label">Sommeil</span></button>
+    <button class="cat-tab" onclick="selectCategory(5)"><span class="cat-emoji">💆</span><span class="cat-label">Corps</span></button>
+    <button class="cat-tab" onclick="selectCategory(6)"><span class="cat-emoji">🧪</span><span class="cat-label">Examens</span></button>
+    <button class="cat-tab" onclick="selectCategory(7)"><span class="cat-emoji">👶</span><span class="cat-label">Bébé</span></button>
+  </div>
+</div>
+
+<div class="quick-questions" id="quickQuestions">
+  <span class="chip loading-chip">Chargement des suggestions…</span>
+</div>
+
+<div class="chat-container" id="chat">
+  <div class="welcome-card">
+    <h2>Bonjour — bienvenue dans votre espace grossesse 🌿</h2>
+    <p>Posez vos questions librement ou par voix 🎤. Ouvrez le panneau 📋 pour votre suivi, vos questions RDV et la checklist des examens suisses.</p>
+    <div class="profile-pills" id="profilePills">
+      <span class="profile-pill">🤰 1er trimestre</span>
+      <span class="profile-pill">🥩 Omnivore · protéines animales</span>
+      <span class="profile-pill">🏋️ Fitness actif</span>
+      <span class="profile-pill">33 ans · Lausanne</span>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-inner">
+    <button class="mic-btn" id="micBtn" onclick="toggleVoice()" title="Question vocale">🎤</button>
+    <textarea id="userInput" placeholder="Posez votre question…" rows="1"
+      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+  <div class="disclaimer-text">⚠️ Informations générales à titre éducatif. Consultez toujours votre médecin ou sage-femme.</div>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+
+const CAT_NAMES = ['Alimentation','Sport & mouvement','Bien-être & mental','Santé & symptômes','Sommeil & repos','Corps & douleurs','Examens & suivi médical','Développement du bébé'];
+
+const BEBE_DATA = {
+  4:"Taille d'un grain de pavot (2 mm). Le cœur commence à se former. Le tube neural (futur cerveau) se développe activement.",
+  5:"Taille d'une graine de sésame (3 mm). Le cœur bat déjà ! Les bourgeons des bras et jambes apparaissent.",
+  6:"Taille d'une lentille (6 mm). Le visage se forme, nez et mâchoire esquissés. Le cerveau se développe très rapidement.",
+  7:"Taille d'un myrtille (1 cm). Mains et pieds apparaissent comme des palettes. Le cerveau produit ~100 nouvelles cellules par minute.",
+  8:"Taille d'un haricot (1.6 cm). Les doigts commencent à se former. Les paupières se développent.",
+  9:"Taille d'une cerise (2.3 cm). Les muscles fonctionnent, bébé peut bouger (non ressenti encore). Le cœur a ses 4 chambres.",
+  10:"Taille d'une fraise (3.1 cm). Tous les organes vitaux sont formés. Les ongles commencent à pousser.",
+  11:"Taille d'un citron vert (4.1 cm). Bébé avale du liquide amniotique. Les réflexes se développent.",
+  12:"Taille d'une prune (5.4 cm). Fin du 1er trimestre ! Les risques de fausse couche diminuent fortement. Le sexe est distinguable à l'écho.",
+  13:"Taille d'une pêche (7.4 cm). Début du 2e trimestre. Les empreintes digitales se forment. Bébé fait des grimaces.",
+  14:"Taille d'un citron (8.7 cm). Bébé suce son pouce. Le lanugo (poils fins protecteurs) apparaît.",
+  15:"Taille d'une pomme (10 cm). Bébé peut entendre des sons. Les os se renforcent progressivement.",
+  16:"Taille d'un avocat (11.6 cm). Les mouvements commencent à être ressentis. Les yeux peuvent bouger.",
+  17:"Taille d'une poire (13 cm). Couche graisseuse qui se forme. Le squelette se transforme de cartilage en os.",
+  18:"Taille d'un poivron (14 cm). Premiers mouvements bien perceptibles. Les oreilles sont pleinement formées.",
+  19:"Taille d'une mangue (15 cm). Le vernix (enduit protecteur) recouvre la peau. Sens du goût développé.",
+  20:"Mi-grossesse ! Taille d'une banane (16 cm). Sourcils et cils visibles. C'est souvent la semaine de l'écho morphologique.",
+  22:"Taille d'une papaye. Les lèvres, paupières et sourcils bien formés. Bébé reconnaît votre voix.",
+  24:"Taille d'un épi de maïs (30 cm). Seuil de viabilité ! Les poumons commencent à produire du surfactant.",
+  26:"Activité cérébrale intense. Les yeux réagissent à la lumière. Bébé ouvre les yeux.",
+  28:"Début du 3e trimestre ! Bébé peut rêver. Le cerveau se développe très rapidement.",
+  30:"Taille d'un chou (40 cm). Bébé produit des globules rouges. Il se retourne souvent (tête en bas idéalement).",
+  32:"Taille d'une courge (42 cm). Pratique la respiration. Les ongles sont complets.",
+  34:"Taille d'un ananas (45 cm). Immunité passive transmise. Les poumons presque matures.",
+  36:"Taille d'une laitue romaine (47 cm). Bébé perd le lanugo. Considéré comme presque à terme.",
+  38:"À terme précoce. Bébé est pleinement développé. Il attend juste le bon moment.",
+  40:"Terme officiel ! Bébé pèse environ 3.3 kg et mesure ~50 cm. Prêt pour le grand jour. 🎉"
+};
+
+const EXAMS_DATA = [
+  { trimestre: "1er trimestre", items: [
+    { label: "Prise de sang initiale (groupe sanguin, toxo, rubéole, HIV, hépatites, NFS)", week: "S6–8", id: "e1" },
+    { label: "Première consultation obstétricale", week: "S6–10", id: "e2" },
+    { label: "Échographie de datation (confirme terme, vitalité, nombre d'embryons)", week: "S11–13", id: "e3" },
+    { label: "Dépistage combiné T21 (nuque + prise de sang PAPP-A / βhCG)", week: "S11–13", id: "e4" },
+    { label: "Urine (bandelette / ECBU) — dépistage infection urinaire", week: "S8–12", id: "e5" },
+    { label: "Acide folique 0.4 mg/j (à prendre dès la conception jusqu'à S12)", week: "Continu", id: "e6" },
+  ]},
+  { trimestre: "2e trimestre", items: [
+    { label: "Échographie morphologique (anatomie complète du bébé)", week: "S20–22", id: "e7" },
+    { label: "Dépistage diabète gestationnel (HGPO 75g)", week: "S24–28", id: "e8" },
+    { label: "Prise de sang (NFS, ferritine, toxo si négative)", week: "S20–24", id: "e9" },
+    { label: "Mesure tension artérielle à chaque consultation", week: "Continu", id: "e10" },
+    { label: "Amniocentèse si dépistage T21 anormal (sur indication)", week: "S15–18", id: "e11" },
+  ]},
+  { trimestre: "3e trimestre", items: [
+    { label: "Échographie de croissance + présentation bébé", week: "S30–32", id: "e12" },
+    { label: "Streptocoque B (prélèvement vaginal)", week: "S35–37", id: "e13" },
+    { label: "Dernière prise de sang (NFS, coagulation)", week: "S36", id: "e14" },
+    { label: "Consultation anesthésie (préparation péridurale si souhaitée)", week: "S36", id: "e15" },
+    { label: "Monitoring fœtal si dépassement de terme", week: "S41+", id: "e16" },
+  ]}
+];
+
+const SYSTEM_PROMPT = `Tu es un assistant spécialisé en grossesse pour un couple avec ce profil :
+- Mère : 33 ans, omnivore, valorise les protéines animales de qualité, sceptique des discours dogmatiques
+- Sport : musculation/fitness modéré, veut continuer à bouger intelligemment
+- Localisation : Lausanne, Suisse
+- Philosophie : faits vérifiables uniquement. Distinction claire entre INTERDIT (risque prouvé) / DÉCONSEILLÉ (précaution) / Recommandation conservatrice sans base solide.
+
+RÈGLES : Ne jamais inventer. Citer les sources (OMS, OFSP, consensus médical). Valoriser les protéines animales si justifié. Encourager l'activité physique adaptée. Concis, direct, français uniquement. Terminer par une note sur le niveau de certitude.`;
+
+// ── STATE ──────────────────────────────────────────────────
+let conversationHistory = [];
+let isLoading = false;
+let activeCategory = 0;
+let askedQuestions = {};
+let selectedHumeur = '';
+let sidebarOpen = false;
+let isRecording = false;
+let recognition = null;
+let activeSTab = 0;
+
+// ── SIDEBAR TABS ───────────────────────────────────────────
+function showSTab(idx) {
+  activeSTab = idx;
+  document.querySelectorAll('.stab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.sidebar-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('hidden', !sidebarOpen);
+}
+
+// ── WEEK CALCULATION ───────────────────────────────────────
+function calcWeek() {
+  const startDate = document.getElementById('startDateInput').value;
+  if (!startDate) return;
+  const start = new Date(startDate);
+  const today = new Date();
+  const diffDays = Math.floor((today - start) / (1000*60*60*24));
+  const week = Math.floor(diffDays / 7) + 1;
+
+  const clampedWeek = Math.max(1, Math.min(42, week));
+  document.getElementById('weekNumber').textContent = clampedWeek;
+
+  let trimestre = '';
+  if (clampedWeek <= 12) trimestre = '1er trimestre';
+  else if (clampedWeek <= 26) trimestre = '2e trimestre';
+  else trimestre = '3e trimestre';
+  document.getElementById('weekTrimestre').textContent = trimestre;
+  document.getElementById('weekBadge').textContent = `S${clampedWeek} · ${trimestre === '1er trimestre' ? '1er' : trimestre === '2e trimestre' ? '2e' : '3e'} trim.`;
+
+  updateBebeCard(clampedWeek);
+}
+
+function getCurrentWeek() {
+  const w = document.getElementById('weekNumber').textContent;
+  return w === '—' ? 8 : parseInt(w);
+}
+
+function updateBebeCard(week) {
+  if (!week || week < 4) {
+    document.getElementById('bebeText').textContent = 'Entrez votre date de début de grossesse pour voir le développement de votre bébé.';
+    return;
+  }
+  const keys = Object.keys(BEBE_DATA).map(Number).sort((a,b)=>a-b);
+  let closest = keys[0];
+  for (const k of keys) { if (k <= week) closest = k; }
+  document.getElementById('bebeText').textContent = BEBE_DATA[closest] || 'Données non disponibles.';
+}
+
+// ── PROFILE SAVE/LOAD ──────────────────────────────────────
+function loadProfile() {
+  try {
+    const p = JSON.parse(localStorage.getItem('grossesse_profile') || '{}');
+    if (p.startDate) {
+      document.getElementById('startDateInput').value = p.startDate;
+      calcWeek();
+    }
+    if (p.weight) document.getElementById('weightInput').value = p.weight;
+    if (p.rdv) document.getElementById('rdvInput').value = p.rdv;
+    if (p.rdvNote) document.getElementById('rdvNoteInput').value = p.rdvNote;
+    if (p.notes) document.getElementById('notesInput').value = p.notes;
+
+    // Humeur: reset daily
+    const today = new Date().toDateString();
+    if (p.humeurDate === today && p.humeur) {
+      selectedHumeur = p.humeur;
+      document.querySelectorAll('.humeur-btn').forEach(b => {
+        if (b.textContent.trim() === p.humeur) b.classList.add('active');
+      });
+    }
+
+    // Supplements: reset daily
+    const sups = ['folique','fer','d3','omega','iode'];
+    if (p.supDate === today) {
+      sups.forEach(s => { if (p['sup_'+s]) document.getElementById('sup_'+s).checked = true; });
+    }
+  } catch(e) {}
+
+  loadRdvQs();
+  loadExams();
+}
+
+function saveProfile() {
+  const today = new Date().toDateString();
+  const sups = ['folique','fer','d3','omega','iode'];
+  const supData = {};
+  sups.forEach(s => { supData['sup_'+s] = document.getElementById('sup_'+s).checked; });
+
+  const profile = {
+    startDate: document.getElementById('startDateInput').value,
+    weight: document.getElementById('weightInput').value,
+    rdv: document.getElementById('rdvInput').value,
+    rdvNote: document.getElementById('rdvNoteInput').value,
+    notes: document.getElementById('notesInput').value,
+    humeur: selectedHumeur,
+    humeurDate: today,
+    supDate: today,
+    ...supData
+  };
+  localStorage.setItem('grossesse_profile', JSON.stringify(profile));
+  showSaved('savedNotice');
+}
+
+function showSaved(id) {
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function setHumeur(btn, val) {
+  document.querySelectorAll('.humeur-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedHumeur = val;
+}
+
+// ── RDV QUESTIONS ──────────────────────────────────────────
+let rdvQuestions = [];
+
+function loadRdvQs() {
+  try { rdvQuestions = JSON.parse(localStorage.getItem('grossesse_rdvqs') || '[]'); } catch(e) { rdvQuestions = []; }
+  renderRdvQs();
+}
+
+function saveRdvQs() {
+  localStorage.setItem('grossesse_rdvqs', JSON.stringify(rdvQuestions));
+  showSaved('savedNoticeRdv');
+}
+
+function renderRdvQs() {
+  const list = document.getElementById('rdvQList');
+  list.innerHTML = '';
+  if (rdvQuestions.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--gray-warm);font-style:italic;">Aucune question pour le moment.</div>';
+    return;
+  }
+  rdvQuestions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'rdv-q-item' + (q.done ? ' done' : '');
+    div.innerHTML = `
+      <input type="checkbox" ${q.done?'checked':''} onchange="toggleRdvQ(${i})">
+      <span>${q.text}</span>
+      <button class="rdv-q-del" onclick="deleteRdvQ(${i})">×</button>`;
+    list.appendChild(div);
+  });
+}
+
+function addRdvQ() {
+  const input = document.getElementById('rdvQInput');
+  const text = input.value.trim();
+  if (!text) return;
+  rdvQuestions.push({ text, done: false });
+  input.value = '';
+  renderRdvQs();
+  saveRdvQs();
+}
+
+function toggleRdvQ(i) {
+  rdvQuestions[i].done = !rdvQuestions[i].done;
+  renderRdvQs();
+  saveRdvQs();
+}
+
+function deleteRdvQ(i) {
+  rdvQuestions.splice(i, 1);
+  renderRdvQs();
+  saveRdvQs();
+}
+
+async function suggestRdvQuestions() {
+  const btn = document.querySelector('.suggest-btn');
+  btn.textContent = '✨ Génération…';
+  btn.disabled = true;
+
+  const week = getCurrentWeek();
+  const prompt = `Génère 5 questions pertinentes qu'une femme enceinte (semaine ${week}, omnivore, fait de la musculation, 33 ans, Suisse) devrait poser à son médecin ou sage-femme lors de sa prochaine consultation.
+Questions courtes, pratiques, spécifiques à la semaine ${week}.
+Réponds UNIQUEMENT en JSON : {"questions":["Q1","Q2","Q3","Q4","Q5"]}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '{}';
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const questions = parsed.questions || [];
+    questions.forEach(q => {
+      if (!rdvQuestions.find(r => r.text === q)) {
+        rdvQuestions.push({ text: q, done: false });
+      }
+    });
+    renderRdvQs();
+    saveRdvQs();
+  } catch(e) {
+    // fallback
+    const fallback = [
+      "Dois-je adapter mon alimentation à ce stade ?",
+      "Puis-je continuer la musculation ?",
+      "Quels examens sont prévus ce trimestre ?",
+      "Les suppléments actuels sont-ils suffisants ?",
+      "Y a-t-il des signaux d'alarme à surveiller ?"
+    ];
+    fallback.forEach(q => {
+      if (!rdvQuestions.find(r => r.text === q)) rdvQuestions.push({ text: q, done: false });
+    });
+    renderRdvQs();
+    saveRdvQs();
+  }
+
+  btn.textContent = '✨ Suggérer des questions selon ma semaine';
+  btn.disabled = false;
+}
+
+// ── EXAM CHECKLIST ─────────────────────────────────────────
+let examState = {};
+
+function loadExams() {
+  try { examState = JSON.parse(localStorage.getItem('grossesse_exams') || '{}'); } catch(e) { examState = {}; }
+  renderExams();
+}
+
+function saveExams() {
+  localStorage.setItem('grossesse_exams', JSON.stringify(examState));
+  showSaved('savedNoticeExam');
+}
+
+function renderExams() {
+  const list = document.getElementById('examList');
+  list.innerHTML = '';
+  EXAMS_DATA.forEach(section => {
+    const label = document.createElement('div');
+    label.className = 'exam-trimestre-label';
+    label.textContent = section.trimestre;
+    list.appendChild(label);
+
+    section.items.forEach(item => {
+      const div = document.createElement('div');
+      const done = examState[item.id] || false;
+      div.className = 'exam-item' + (done ? ' done' : '');
+      div.innerHTML = `
+        <input type="checkbox" ${done?'checked':''} onchange="toggleExam('${item.id}', this)">
+        <span>${item.label}</span>
+        <span class="exam-week">${item.week}</span>`;
+      list.appendChild(div);
+    });
+  });
+}
+
+function toggleExam(id, checkbox) {
+  examState[id] = checkbox.checked;
+  const item = checkbox.closest('.exam-item');
+  item.classList.toggle('done', checkbox.checked);
+  saveExams();
+}
+
+// ── VOICE INPUT ────────────────────────────────────────────
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('La reconnaissance vocale n\'est pas supportée sur ce navigateur. Essayez Safari sur iOS ou Chrome sur Android/desktop.');
+    return;
+  }
+
+  if (isRecording) {
+    recognition.stop();
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'fr-FR';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  const micBtn = document.getElementById('micBtn');
+  const input = document.getElementById('userInput');
+
+  recognition.onstart = () => {
+    isRecording = true;
+    micBtn.classList.add('recording');
+    micBtn.textContent = '⏹';
+    input.placeholder = '🎤 Parlez…';
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    input.value = transcript;
+    autoResize(input);
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.textContent = '🎤';
+    input.placeholder = 'Posez votre question…';
+    // Auto-send if we got something
+    if (input.value.trim()) sendMessage();
+  };
+
+  recognition.onerror = () => {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.textContent = '🎤';
+    input.placeholder = 'Posez votre question…';
+  };
+
+  recognition.start();
+}
+
+// ── QUESTION GENERATION ────────────────────────────────────
+async function generateQuestions(catIdx) {
+  const container = document.getElementById('quickQuestions');
+  container.innerHTML = '<span class="chip loading-chip">✨ Génération…</span>';
+
+  const week = getCurrentWeek();
+  const alreadyAsked = [...(askedQuestions[catIdx] || [])];
+  const catName = CAT_NAMES[catIdx];
+  const excludeStr = alreadyAsked.length > 0
+    ? `\nÉvite ces questions déjà posées :\n${alreadyAsked.map(q=>`- ${q}`).join('\n')}` : '';
+
+  const prompt = `Génère exactement 4 questions courtes pour une femme enceinte (semaine ${week}, omnivore, musculation, 33 ans, Lausanne) dans la catégorie "${catName}".${excludeStr}
+Questions naturelles, max 10 mots chacune, spécifiques à la semaine ${week} si pertinent.
+Réponds UNIQUEMENT en JSON : {"questions":["Q1","Q2","Q3","Q4"]}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '{}';
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderChips(parsed.questions || [], catIdx);
+  } catch(e) {
+    const fallbacks = {
+      0:["Viande rouge saignante autorisée ?","Quels fromages interdits ?","Combien de protéines/jour ?","Quels poissons éviter ?"],
+      1:["Musculation sûre au 1er trimestre ?","Exercices à éviter absolument ?","Intensité à adapter ?","Course à pied compatible ?"],
+      2:["Gérer l'anxiété du 1er trimestre ?","Le stress affecte-t-il bébé ?","Meilleures pratiques de relaxation ?","Maintenir le moral ?"],
+      3:["Nausées : que faire ?","Symptômes qui doivent alerter ?","Fatigue intense normale ?","Paracétamol autorisé ?"],
+      4:["Quelle position de sommeil ?","Insomnies normales ?","Heures de sommeil idéales ?","Les siestes recommandées ?"],
+      5:["Douleurs abdominales normales ?","Soulager les seins sensibles ?","Maux de dos dès le début ?","Massages autorisés ?"],
+      6:["Examens obligatoires en Suisse ?","Quand la première échographie ?","Suppléments vraiment utiles ?","Dépistage T21 : comment ?"],
+      7:["Que se passe-t-il chez bébé ?","Quand le cœur bat-il ?","Bébé ressent-il quelque chose ?","Quand visible à l'écho ?"]
+    };
+    renderChips(fallbacks[catIdx] || fallbacks[0], catIdx);
+  }
+}
+
+function renderChips(questions, catIdx) {
+  const container = document.getElementById('quickQuestions');
+  container.innerHTML = '';
+  questions.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = q;
+    btn.onclick = () => {
+      if (!askedQuestions[catIdx]) askedQuestions[catIdx] = new Set();
+      askedQuestions[catIdx].add(q);
+      askQuick(q, catIdx);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function selectCategory(idx) {
+  activeCategory = idx;
+  document.querySelectorAll('.cat-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  generateQuestions(idx);
+}
+
+function askQuick(text, catIdx) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+  setTimeout(() => generateQuestions(catIdx ?? activeCategory), 600);
+}
+
+// ── CHAT ──────────────────────────────────────────────────
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function getProfileContext() {
+  const week = getCurrentWeek();
+  const weight = document.getElementById('weightInput').value;
+  const humeur = selectedHumeur;
+  const notes = document.getElementById('notesInput').value;
+  let ctx = `Semaine de grossesse : ${week}. `;
+  if (weight) ctx += `Poids : ${weight} kg. `;
+  if (humeur) ctx += `Humeur du jour : ${humeur}. `;
+  if (notes) ctx += `Notes : ${notes}. `;
+  return ctx;
+}
+
+function appendMessage(role, content) {
+  const chat = document.getElementById('chat');
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role}`;
+  avatar.textContent = role === 'ai' ? '🌿' : '👤';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  if (role === 'ai') {
+    let html = content
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g,'<em>$1</em>')
+      .replace(/^#{1,3} (.*$)/gm,'<strong>$1</strong>')
+      .replace(/^- (.*$)/gm,'<li>$1</li>')
+      .replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>')
+      .split('\n\n').map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    bubble.innerHTML = html;
+  } else {
+    bubble.textContent = content;
+  }
+  div.appendChild(avatar); div.appendChild(bubble);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showTyping() {
+  const chat = document.getElementById('chat');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator'; div.id = 'typing';
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar ai'; avatar.textContent = '🌿';
+  const dots = document.createElement('div');
+  dots.className = 'typing-dots';
+  dots.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  div.appendChild(avatar); div.appendChild(dots);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  input.value = ''; input.style.height = 'auto';
+  appendMessage('user', text);
+  const systemFull = SYSTEM_PROMPT + '\n\nCONTEXTE ACTUEL : ' + getProfileContext();
+  conversationHistory.push({ role: 'user', content: text });
+  showTyping();
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': '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', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemFull,
+        messages: conversationHistory
+      })
+    });
+    const data = await response.json();
+    removeTyping();
+    const reply = data.content?.[0]?.text || "Je n'ai pas pu générer une réponse.";
+    conversationHistory.push({ role: 'assistant', content: reply });
+    appendMessage('ai', reply);
+  } catch(e) {
+    removeTyping();
+    appendMessage('ai', "Une erreur s'est produite. Veuillez réessayer.");
+  }
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadProfile();
+generateQuestions(0);
+</script>
+
+</body>
+</html>
